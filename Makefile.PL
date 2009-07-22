@@ -7,11 +7,11 @@ all_from('lib/Data/Decode.pm');
 requires 'Moose';
 requires 'MooseX::AttributeHelpers';
 requires 'MooseX::NonMoose';
-requires('Encode');
-requires('Encode::Guess');
-requires('Exception::Class');
-requires('HTML::Parser');
-requires('HTTP::Response::Encoding');
+requires 'namespace::clean';
+requires 'Encode';
+requires 'Encode::Guess';
+requires 'Exception::Class';
+requires 'HTML::Parser';
 
 tests('t/*.t t/*/*.t');
 

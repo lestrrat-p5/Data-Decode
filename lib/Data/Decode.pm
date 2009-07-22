@@ -167,7 +167,7 @@ the actual underlying decoders.
 
 =head2 decoder
 
-Get/set the underlying decoder object.
+Get the underlying decoder object.
 
 =head1 AUTHOR
 

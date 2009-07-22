@@ -2,11 +2,9 @@
 package Data::Decode::Encode::HTTP::Response;
 use Moose;
 use namespace::clean -except => qw(meta);
-
 use Data::Decode::Exception;
-use Encode();
 use Data::Decode::Util qw(try_decode pick_encoding);
-use HTTP::Response::Encoding;
+use Encode();
 
 has parser => (
     is => 'ro',
@@ -30,10 +28,10 @@ sub decode {
     my $decoded;
     { # Attempt to decode from header information
         my $from_header;
-        if ( ($res->header('Content-Type') || '') =~ /charset=([\w\-_]+)/gi ) {
+        if ( ($res->header('Content-Type') || '') =~ /charset=([\w\-_]+)/i ) {
             $from_header = $1;
         }
-        my $encoding = pick_encoding( $from_header, $res->encoding );
+        my $encoding = pick_encoding( $from_header );
         $decoded = try_decode($encoding, $string);
         return $decoded if $decoded;
     }
