@@ -1,21 +1,25 @@
-# $Id: /mirror/perl/Data-Decode/trunk/lib/Data/Decode/Encode/HTTP/Response.pm 8763 2007-11-06T09:42:32.814221Z daisuke  $
-#
-# Copyright (c) 2007 Daisuke Maki <daisuke@endeworks.jp>
-# All rights reserved.
 
 package Data::Decode::Encode::HTTP::Response;
-use strict;
-use warnings;
-use base qw(Class::Accessor::Fast);
+use Moose;
+use namespace::clean -except => qw(meta);
+
 use Data::Decode::Exception;
 use Encode();
 use Data::Decode::Util qw(try_decode pick_encoding);
 use HTTP::Response::Encoding;
 
-__PACKAGE__->mk_accessors($_) for qw(_parser);
+has parser => (
+    is => 'ro',
+    isa => 'Data::Decode::Encode::HTTP::Response::Parser',
+    lazy_build => 1,
+);
 
-sub decode
-{
+sub _build_parser {
+    require Data::Decode::Encode::HTTP::Response::Parser;
+    return Data::Decode::Encode::HTTP::Response::Parser->new();
+}
+
+sub decode {
     my ($self, $decoder, $string, $hints) = @_;
 
     if (! $hints->{response} || ! eval { $hints->{response}->isa('HTTP::Response') }) {
@@ -25,10 +29,11 @@ sub decode
 
     my $decoded;
     { # Attempt to decode from header information
-        my $encoding = pick_encoding(
-            $res->encoding, 
-            ( ($res->header('Content-Type') || '') =~ /charset=([\w\-]+)/g),
-        );
+        my $from_header;
+        if ( ($res->header('Content-Type') || '') =~ /charset=([\w\-_]+)/gi ) {
+            $from_header = $1;
+        }
+        my $encoding = pick_encoding( $from_header, $res->encoding );
         $decoded = try_decode($encoding, $string);
         return $decoded if $decoded;
     }
@@ -38,24 +43,11 @@ sub decode
         my $encoding = pick_encoding(
             $p->extract_encodings( $res->content )
         );
-
         $decoded = try_decode($encoding, $string);
         return $decoded if $decoded;
     }
 
     Data::Decode::Exception::Deferred->throw;
-}
-
-sub parser
-{
-    my $self = shift;
-    my $parser = $self->_parser();
-    if (! $parser) {
-        require Data::Decode::Encode::HTTP::Response::Parser;
-        $parser = Data::Decode::Encode::HTTP::Response::Parser->new();
-        $self->_parser($parser);
-    }
-    return $parser;
 }
 
 1;

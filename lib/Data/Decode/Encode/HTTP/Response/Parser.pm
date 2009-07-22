@@ -1,24 +1,19 @@
-# $Id: /mirror/perl/Data-Decode/trunk/lib/Data/Decode/Encode/HTTP/Response/Parser.pm 8610 2007-11-06T07:46:36.901340Z daisuke  $
-#
-# Copyright (c) 2007 Daisuke Maki <daisuke@endeworks.jp>
-# All rights reserved.
 
 package Data::Decode::Encode::HTTP::Response::Parser;
-use strict;
-use warnings;
-use base qw(HTML::Parser);
+use Moose;
+use MooseX::NonMoose;
 
-sub new
-{
-    my $class = shift;
-    $class->SUPER::new(
-        api_version => 3,
-        start_h     => [ \&_parse_meta, "self, tagname, attr" ]
-    );
+extends 'HTML::Parser';
+
+sub FOREIGNBUILDARGS {
+    my ($class, %args) = @_;
+
+    $args{api_version} ||= 3;
+    $args{start_h}     ||= [ \&_parse_meta, "self, tagname, attr" ];
+    return %args;
 }
 
-sub extract_encodings
-{
+sub extract_encodings {
     my $self = shift;
 
     my @encodings;

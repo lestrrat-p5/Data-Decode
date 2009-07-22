@@ -12,7 +12,7 @@ BEGIN
 use Encode;
 
 my $decoder = Data::Decode->new(
-    strategy => Data::Decode::Chain->new(
+    decoder => Data::Decode::Chain->new(
         decoders => [
             Data::Decode::Encode::Guess->new( encodings => [ 'hebrew' ] ),
             Data::Decode::Encode::Guess::JP->new

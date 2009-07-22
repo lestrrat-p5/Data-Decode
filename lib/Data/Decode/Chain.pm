@@ -1,34 +1,26 @@
-# $Id: /mirror/perl/Data-Decode/trunk/lib/Data/Decode/Chain.pm 4834 2007-11-03T09:22:42.139028Z daisuke  $
-#
-# Copyright (c) 2007 Daisuke Maki <daisuke@endeworks.jp>
-# All rights reserved.
 
 package Data::Decode::Chain;
-use strict;
-use warnings;
-use base qw(Class::Accessor::Fast);
+use Moose;
+use MooseX::AttributeHelpers;
+use namespace::clean -except => qw(meta);
 use Data::Decode::Exception;
+use Data::Decode::Types;
 
-__PACKAGE__->mk_accessors($_) for qw(decoders);
-
-sub new
-{
-    my $class = shift;
-    my %args  = @_;
-    $args{decoders} ||= [];
-    if (ref $args{decoders} ne 'ARRAY') {
-        $args{decoders} = [ $args{decoders} ];
+has decoders => (
+    metaclass => 'Collection::Array',
+    is => 'ro',
+    isa => 'ArrayRef[Data::Decode::Decoder]',
+    required => 1,
+    provides => {
+        elements => 'all_decoders',
     }
+);
 
-    return $class->SUPER::new({ decoders => $args{decoders} });
-}
-
-sub decode
-{
+sub decode {
     my ($self, $decoder, $string, $hints) = @_;
 
     my $ret;
-    foreach my $decoder (@{ $self->decoders }) {
+    foreach my $decoder ($self->all_decoders) {
         $ret = eval {
             $decoder->decode($decoder, $string, $hints);
         };

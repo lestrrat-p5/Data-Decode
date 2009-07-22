@@ -10,7 +10,7 @@ BEGIN
 use Encode;
 
 my $decoder = Data::Decode->new(
-    strategy => Data::Decode::Encode::Guess::JP->new
+    decoder => Data::Decode::Encode::Guess::JP->new
 );
 ok($decoder);
 isa_ok($decoder, "Data::Decode");

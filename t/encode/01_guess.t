@@ -10,7 +10,7 @@ BEGIN
 use Encode;
 
 my $decoder = Data::Decode->new(
-    strategy => Data::Decode::Encode::Guess->new(encodings => [ 'hebrew', 'shiftjis', 'utf8' ])
+    decoder => Data::Decode::Encode::Guess->new(encodings => [ 'hebrew', 'shiftjis', 'utf8' ])
 );
 ok($decoder);
 isa_ok($decoder, "Data::Decode");

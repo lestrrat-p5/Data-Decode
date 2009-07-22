@@ -1,47 +1,30 @@
-# $Id: /mirror/perl/Data-Decode/trunk/lib/Data/Decode.pm 8881 2007-11-09T10:28:54.182349Z daisuke  $
-#
-# Copyright (c) 2007 Daisuke Maki <daisuke@endeworks.jp>
-# All rights reserved.
-
 package Data::Decode;
-use strict;
-use warnings;
-use base qw(Class::Accessor::Fast);
-use Carp ();
+use Moose;
+use Moose::Util::TypeConstraints;
+use namespace::clean -except => qw(meta);
 use Data::Decode::Exception;
-
-__PACKAGE__->mk_accessors($_) for qw(_decoder);
+use Data::Decode::Types;
 
 our $VERSION = '0.00006';
 
-sub new
-{
-    my $class = shift;
-    my %args  = @_;
-    my $self  = bless {}, $class;
-    $self->decoder($args{strategy});
+has decoder => (
+    is => 'ro',
+    isa => 'Data::Decode::Decoder',
+    required => 1
+);
 
-    return $self;
-}
+sub import {
+    my ( $self, @modules ) = @_;
 
-sub decoder
-{
-    my $self = shift;
-
-    my $ret;
-    if (! @_) {
-        $ret = $self->_decoder();
-    } else {
-        $ret = $self->_decoder($_[0] || Carp::croak("No strategy specified") );
-        if (! eval { $_[0]->can('decode') }) {
-            Carp::croak("$_[0] does not implement a 'decode' method");
+    foreach my $class (@modules) {
+        if ($class !~ s/^\+//) {
+            $class = "Data::Decode::$class";
+            Class::MOP::load_class($class);
         }
     }
-    return $ret;
 }
 
-sub decode
-{
+sub decode {
     my ($self, $data, $hints) = @_;
 
     return () unless defined $data;

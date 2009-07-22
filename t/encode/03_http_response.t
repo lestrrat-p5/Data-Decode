@@ -11,7 +11,7 @@ use Encode;
 use HTTP::Response;
 
 my $decoder = Data::Decode->new(
-    strategy => Data::Decode::Encode::HTTP::Response->new
+    decoder => Data::Decode::Encode::HTTP::Response->new
 );
 ok($decoder);
 isa_ok($decoder, "Data::Decode");
@@ -32,8 +32,12 @@ foreach my $encoding qw(euc-jp shiftjis 7bit-jis utf8) {
         undef,
         qq{<html><head><meta http-equiv="Content-Type" content="text/html; charset=$encoding"></head><body>$string</body></html>}
     );
-    
-    is($decoder->decode($string, { response => $response }), Encode::decode($encoding, $string), "META charset=$encoding");
+
+    is(
+        $decoder->decode($string, { response => $response }),
+        Encode::decode($encoding, $string),
+        "META charset=$encoding"
+    );
 
     $response = HTTP::Response->new(
         200,
