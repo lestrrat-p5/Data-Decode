@@ -5,7 +5,7 @@ use namespace::clean -except => qw(meta);
 use Data::Decode::Exception;
 use Data::Decode::Types;
 
-our $VERSION = '0.00006';
+our $VERSION = '0.00007_01';
 
 has decoder => (
     is => 'ro',

@@ -1,6 +1,14 @@
 Changes
 =======
 
+0.00007_01 22 Jul 2009
+  ** !!! Backwards Incompatible Changes !!!! **
+  - Moooooooooose
+  - Remove "strategy" parameter. Now it's just decoder
+  - Allow to specify a list of decoders, instead of having to explicitly
+    create a Data::Decode::Chain object
+  - Allow to specify a class name instead of a decoder instance
+
 0.00006 07 Nov 2007
   - Fix Data::Decode::decode to actuall respect Data::Decode::Exception
 
