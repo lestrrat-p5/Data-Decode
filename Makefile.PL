@@ -13,7 +13,9 @@ requires 'Encode::Guess';
 requires 'Exception::Class';
 requires 'HTML::Parser';
 
+test_requires 'Test::More';
+test_requires 'Test::Exception';
+
 tests('t/*.t t/*/*.t');
 
-auto_install;
 WriteAll;
