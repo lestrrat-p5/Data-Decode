@@ -15,16 +15,19 @@ sub _build_encodings {
     return [];
 }
 
-sub decode
-{
+sub guess_encoding {
     my ($self, $decoder, $string, $hints) = @_;
-
     local $Encode::Guess::NoUTFAutoGuess = 1;
-    my $guess = Encode::Guess::guess_encoding(
+    return Encode::Guess::guess_encoding(
         $string,
         @{ $self->encodings }
     );
+}
 
+sub decode {
+    my ($self, $decoder, $string, $hints) = @_;
+
+    my $guess = $self->guess_encoding($decoder, $string, $hints);
     if (! ref $guess) {
         Data::Decode::Exception::Deferred->throw($guess);
     }
