@@ -126,17 +126,36 @@ Instantiates a new Data::Decode object.
 =item decoder
 
 Required. Takes in the object that encapsulates the actual decoding logic.
-The object must have a method named "decode", which takes in a reference
-to the Data::Decode object and a string to be decoded. An optional third
-parameter may be provided to specify any hints that could be used to figure
-out what to do. 
 
+(WARNING: Subject to change - we may require an object that implements a role
+instead of just a function in the future. Beware!) The object must have a 
+method named "decode", which takes in a reference to the Data::Decode object 
+and a string to be decoded. An optional third parameter may be provided to 
+specify any hints that could be used to figure out what to do. 
+
+  # a decode() method
   sub decode {
     my ($self, $decoder, $string, $hints) = @_;
     # $decoder = Data::Decode object
     # $string  = a scalar to be decoded
     # $hints   = a hashref of hints
   }
+
+You may also specify the class names of the decoders -- in that case, an 
+argument-less new() will be called upon the class name to instantiate the
+decoder.
+
+If you provide a list of decoders, Data::Decode::Chain will automatically be
+set for you.
+
+  my $decoder = Data::Decode->new(
+    decoder => [  # This will turn into a Data::Decode::Chain object
+      Decoder1->new(),
+      Decoder2->new(),
+      Decoder3->new(),
+      ...
+    ]
+  );
 
 =back
 

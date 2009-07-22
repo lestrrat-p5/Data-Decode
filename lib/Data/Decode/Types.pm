@@ -13,7 +13,31 @@ subtype 'Data::Decode::Decoder'
 coerce 'Data::Decode::Decoder'
     => from 'ArrayRef',
     => via {
+        Class::MOP::load_class('Data::Decode::Chain');
         Data::Decode::Chain->new(decoders => $_)
+    }
+;
+
+subtype 'Data::Decode::DecoderList'
+    => as 'ArrayRef[Data::Decode::Decoder]'
+;
+
+coerce 'Data::Decode::DecoderList'
+    => from 'ArrayRef'
+    => via {
+        my @list = @$_;
+        return [
+            map {
+                Class::MOP::blessed $_ ? $_ :
+                do {
+                    if (!s/^\+//) {
+                        $_ = "Data::Decode::$_";
+                    }
+                    Class::MOP::load_class($_);
+                    $_->new();
+                }
+            } @list
+        ]
     }
 ;
 

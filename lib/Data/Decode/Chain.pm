@@ -9,8 +9,9 @@ use Data::Decode::Types;
 has decoders => (
     metaclass => 'Collection::Array',
     is => 'ro',
-    isa => 'ArrayRef[Data::Decode::Decoder]',
+    isa => 'Data::Decode::DecoderList',
     required => 1,
+    coerce => 1,
     provides => {
         elements => 'all_decoders',
     }
