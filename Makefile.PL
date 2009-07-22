@@ -4,8 +4,9 @@ use inc::Module::Install;
 name('Data-Decode');
 all_from('lib/Data/Decode.pm');
 
-requires('Carp');
-requires('Class::Accessor::Fast');
+requires 'Moose';
+requires 'MooseX::AttributeHelpers';
+requires 'MooseX::NonMoose';
 requires('Encode');
 requires('Encode::Guess');
 requires('Exception::Class');
